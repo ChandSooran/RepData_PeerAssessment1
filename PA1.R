@@ -1,20 +1,6 @@
----
-title: "Peer Assessment 1 - Chand Sooran"
-author: "Chand Sooran"
-date: "August 15, 2015"
-output: html_document
----
+## Peer Assessment 1 
+## Chand Sooran
 
-## LOADING AND PROCESSING THE DATA
-
-Show any code that is needed to 
-
-1. Load the data
-2. Process/transform the data (if necessary) into a format suitable for analysis
-
-Here is the code I developed for loading the data and preparing to do the analysis
-
-```{r, echo = TRUE}
 ## Set the working directory
 olddir <- "C://Chand Sooran/Johns Hopkins/Reproducible Research/Assignment 1"
 setwd(olddir)
@@ -39,16 +25,7 @@ RawData <- read.csv(file = "activity.csv")
 
 ## Set par properties
 par(mfrow = c(1,1))
-```
 
-## WHAT IS THE MEAN TOTAL NUMBER OF STEPS TAKEN PER DAY?
-
-For this part of the assignment, I ignored the missing values in the dataset.
-
-1. Make a histogram of the total number of steps taken each day
-2. Calculate and report the median and mean total number of steps taken each day
-
-```{r, echo = TRUE}
 ## Calculate the number of days in the study
 UniqueDays <- unique(RawData$date)
 NumberOfDays <- length(UniqueDays)
@@ -93,21 +70,14 @@ hist(IgnoreDailyStepsVector, col = "blue", breaks = 25,
 
 ## Calculate and report the mean # of steps taken per day
 IgnoreMeanSteps <- mean(IgnoreDailyStepsVector)
+print("The mean number of daily steps taken (ignoring missing values) is")
+print(IgnoreMeanSteps)
 
 ## Calculate and report the median # of steps taken per day
 IgnoreMedianSteps <- median(IgnoreDailyStepsVector)
-```
+print("The median number of daily steps taken (ignoring missing values) is")
+print(IgnoreMedianSteps)
 
-**The mean number of daily steps taken (ignoring missing values) is `r IgnoreMeanSteps`.**
-
-**The median number of daily steps take (ignoring missing values) is `r IgnoreMedianSteps`.**
-
-## WHAT IS THE AVERAGE DAILY ACTIVITY PATTERN?
-
-1. Make a time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all the days (y-axis)
-2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
-
-```{r}
 ## Subset the data frame by interval, calculate the mean steps for each interval, assemble mean vector
 IntervalFactor <- as.factor(IndexVector) ## For subsetting
 IgnoreIntervalFrame <- NULL
@@ -136,31 +106,15 @@ IgnoreIntervalDescending <- IgnoreInterval[order(IgnoreInterval$Steps, decreasin
 
 ## Report the index number for the interval with the highest number of average steps
 HighestIgnoreInterval <- IgnoreIntervalDescending[1,1]
-```
+print("The 5-minute interval, on average across all the days in the dataset, ignoring NAs")
+print("with the highest value is")
+print(HighestIgnoreInterval)
 
-**The 5-minute interval, on average across all the days in the dataset, ignoring NAs with the highest 
-value is `r HighestIgnoreInterval`.**
-
-## IMPUTING MISSING VALUES
-Note that the existence of missing values may distort the analysis.
-
-1. Calculate and report the total number of missing values in the dataset.
-2. Devise a strategy for filling in all of the missing values.
-3. Create a new dataset that is equal to the original dataset but with the missing values filled in.
-4. Make a histogram of the total number of steps taken each day, and calculate and report the mean and median total number of steps taken per day.  Do these values differ from the estimates from the first part of the assignment?  What is the impact of imputing missing data on the estimates of the total daily number of steps?
-
-```{r}
 ## Calculate and report the number of missing values
 NumberMissingValues <- sum(is.na(RawData$steps))
-```
+print("The number of missing values is")
+print(NumberMissingValues)
 
-**THe total number of missing values in the dataset is `r NumberMissingValues`.**
-
-To fill in the missing values, I will assign the average value for the interval calculated in the earlier exercise.  So, I have chopped the day into 288 intervals and indexed them from 1 to 288.  For any day, where there is a missing value for interval j, I will substitute the value of the mean of the intervals across days from the days in which there is a non-NA value for that interval j.
-
-Here, I have created a new dataset that is equal to the original dataset but with the missing values filled in.
-
-```{r}
 ## Fill in the missing values for the dataset with the mean for the associated interval from above analysis
 NOBS <- length(IntervalData$Steps)
 TestNA <- is.na(IntervalData$Steps)
@@ -182,11 +136,7 @@ for (i in 1:NOBS) {
 FitData <- data.frame(v1 = StepsData, v2 = IntervalData$Date, v3 = IntervalData$Interval)
 FitDataNames <- c("Steps","Date","Interval")
 names(FitData) <- FitDataNames
-```
 
-Here is the histogram of the total number of steps taken each day, with this new dataset including imputed values for those instances where previously there had been an NA.
-
-```{r}
 ## Calculate the number of days in the study after adjusting for missing values
 UniqueFitDays <- unique(FitData$Date)
 NumberOfFitDays <- length(UniqueFitDays)
@@ -205,37 +155,17 @@ for (i in UniqueFitDays) {
 hist(FitDailyStepsVector, col = "blue", breaks = 25, 
      main = "Histogram of Daily Steps Taken, Adjusting for NAs",
      xlab = "Daily Steps Taken")
-```
 
-Here is the code for the calculation of the mean and the median total number of steps taken each day.
-
-```{r}
 ## Calculate and report the mean # of steps taken per day
 FitMeanSteps <- mean(FitDailyStepsVector)
+print("The mean number of daily steps taken (adjusting for missing values) is")
+print(FitMeanSteps)
 
 ## Calculate and report the median # of steps taken per day
 FitMedianSteps <- median(FitDailyStepsVector)
-```
+print("The median number of daily steps taken (adjusting for missing values) is")
+print(FitMedianSteps)
 
-**The mean total number of steps taken each day, after adjusting for the missing values by substituting the** **average steps taken in intervals with missing data, is ```r FitMeanSteps```.**
-
-**The median total number of steps taken each day, after adjusting for the missing values by substituting the**
-**average steps taken in intervals with missing data, is ```r FitMedianSteps```.**
-
-**There was no impact on the calculated value of the mean and a negligible impact on the calculated**
-**value of the median because I used the mean by interval to impute the missing data and this served**
-**to anchor the calculation.**
-
-## ARE THERE DIFFERENCES IN ACTIVITY PATTERNS BEETWEEN WEEKDAYS AND WEEKENDS?
-
-Use the dataset with the filled-in missing values for this part.
-
-1. Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether
-a given day is a weekday or weekend day.
-2. Make a panel plot containing a time series plot of the 5-minute interval (x-axis) and the average number
-of steps taken, averaged across all weekday days or weekend days (y-axis).
-
-```{r}
 ## Calculate the days of the week for the dates in the adjusted data set
 FitDates <- as.POSIXct(FitData$Date)
 FitDatesWeekDay <- weekdays(FitDates)
@@ -307,7 +237,8 @@ TotalInterval <- rbind(WeekdayInterval, WeekendInterval)
 ## Make chart comparing average daily steps by interval for Weekend and Weekday
 p <- xyplot(Steps ~ Interval | Day, data = TotalInterval, layout = c(1,2), type = "l", ylab = "Number of Steps")
 print(p)
-```
+
+
 
 
 
